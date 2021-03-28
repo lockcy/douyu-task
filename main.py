@@ -8,12 +8,9 @@
 import requests
 import json
 import configparser
-<<<<<<< HEAD
-=======
 import re
 from logger import logger
 from apscheduler.schedulers.blocking import BlockingScheduler
->>>>>>> 20210328
 
 r = requests.session()
 
@@ -22,73 +19,6 @@ PROXY = {'http': '127.0.0.1:8080'}
 f = configparser.RawConfigParser()
 f.read('config.ini')
 
-<<<<<<< HEAD
-ACF_AUTH = f.get("cookies",  "ACF_AUTH")
-CTN = f.get("cookies", "CTN")
-
-# 获取背包小礼物
-def get_backpack():
-    header = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:87.0) Gecko/20100101 Firefox/87.0",
-        "Referer": "https://www.douyu.com/",
-    }
-    cookies = {
-        "acf_auth": ACF_AUTH,
-    }
-    html = r.get(url='https://www.douyu.com/japi/prop/backpack/web/v1?rid=957090', headers=header, cookies=cookies)
-
-    info_json = json.loads(html.text)
-    gift_json = info_json.get('data').get('list')
-    if gift_json:
-        for item in gift_json:
-            print('小礼物id: ', item.get('id'))
-            print('小礼物名称: ', item.get('name'))
-            print('小礼物数量: ', item.get('count'))
-            print('小礼物过期天数: ', item.get('expiry'))
-    else:
-        print('获取背包信息失败')
-
-# 赠送礼物接口propid:小礼物id propcount:赠送小礼物数量  roomid:房间号
-def send_gift(propid, propcount, roomid):
-    header = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:87.0) Gecko/20100101 Firefox/87.0",
-        "Referer": "https://www.douyu.com/",
-    }
-    cookies = {
-        "acf_auth": ACF_AUTH,
-    }
-    datas = {
-        'propId': propid,
-        'propCount': propcount,
-        'roomId': roomid,
-        'bizExt': '{"yzxq":{}}',
-    }
-    html = r.post(url='https://www.douyu.com/japi/prop/donate/mainsite/v1', headers=header, cookies=cookies, data=datas)
-    info_json = json.loads(html.text)
-    gift_json = info_json.get('data').get('list')
-    if gift_json:
-        print('赠送小礼物成功')
-    else:
-        print('赠送小礼物失败')
-
-
-# 签到这里有个坑,签到后前端的签到按钮不会改变（实际上已经签到）
-def check_in(roomId):
-    header = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:87.0) Gecko/20100101 Firefox/87.0",
-        "Referer": "https://www.douyu.com/",
-    }
-    cookies = {
-        "acf_auth": ACF_AUTH,
-        "acf_ccn": CTN,
-    }
-    datas = {
-        'rid': roomId,
-        'ctn': CTN
-    }
-    html = r.post(url="https://www.douyu.com/japi/roomuserlevel/apinc/checkIn", headers=header, cookies=cookies, data=datas)
-    print(html.text)
-=======
 # 先初步设定有粉丝牌的房间每天定时刷20个荧光棒
 def set_task():
     douyu = Douyu()
@@ -258,56 +188,6 @@ class Douyu(object):
             logger.info('任务未完成，无法领取奖励')
         else:
             logger.info('完成任务{}'.format(id))
->>>>>>> 20210328
-
-
-# 获取鱼塘信息
-def get_sharkinfo(roomId):
-    header = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:87.0) Gecko/20100101 Firefox/87.0",
-        "Referer": "https://www.douyu.com/",
-    }
-    cookies = {
-        "acf_auth": ACF_AUTH,
-        "acf_ccn": CTN,
-    }
-    html = r.get(url="https://www.douyu.com/japi/activepointnc/api/sharkInfo?rid={}".format(roomId), headers=header, cookies=cookies)
-    info_json = json.loads(html.text)
-    data_json = info_json.get('data')
-    if data_json:
-        level = data_json.get('sharkLevel')
-        point = data_json.get('userActivePoint')
-        print('鲨鱼等级: ', level)
-        print('鱼粮: ', point)
-    else:
-        print('获取鱼塘信息失败')
-
-
-# 鱼塘寻宝
-def do_lottery(roomId):
-    header = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:87.0) Gecko/20100101 Firefox/87.0",
-        "Referer": "https://www.douyu.com/",
-    }
-    cookies = {
-        "acf_auth": ACF_AUTH,
-        "acf_ccn": CTN,
-    }
-    datas = {
-        'rid': roomId,
-        'type': 0,
-        'version': 1.2,
-        "ctn": CTN,
-    }
-    html = r.post(url="https://www.douyu.com/japi/activepointnc/api/dolottery", headers=header, cookies=cookies, data=datas)
-    info_json = json.loads(html.text)
-    if info_json:
-        if info_json.get('msg') == '操作成功':
-            print('寻宝成功')
-        elif info_json.get('msg') == '今日次数不足':
-            print('今日次数不足')
-        else:
-            print('未知错误')
 
 
 if __name__ == '__main__':
@@ -321,14 +201,8 @@ if __name__ == '__main__':
     # douyu.get_live_room()
     # douyu.get_backpack()
     # send_gift(268, 1, 5190741)
-<<<<<<< HEAD
-    # check_in(5190741)
-    # get_sharkinfo(52319)
-    do_lottery(52319)
-=======
     # douyu.check_in(3494554)
     # get_sharkinfo(52319)
     # douyu.do_lottery(52319)
     # print(douyu.get_fans_rid())
     # daily_task(14)
->>>>>>> 20210328
